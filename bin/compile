@@ -17,7 +17,7 @@ fetch_meteor() {
 
     mkdir -p $METEOR_HOME
 
-    git clone https://github.com/loku/meteor.git $METEOR_HOME
+    git clone -q https://github.com/loku/meteor.git $METEOR_HOME
 
     DEV_BUNDLE=`mktemp -u`
     curl -sfSo $DEV_BUNDLE https://loku-buildpacks.s3.amazonaws.com/meteor/dev_bundle_Linux_x86_64_0.1.6.tar.gz
