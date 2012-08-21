@@ -22,6 +22,17 @@ fetch_meteor() {
   ar p "$CACHE_DIR/$PACKAGE" data.tar.gz | tar -C "$METEOR_HOME" -zxf -
 }
 
+install_extra_packages() {
+  echo "Installing extra packages"
+
+  BLADE_TARBALL="$CACHE_DIR/blade.tgz"
+  if [ ! -f $BLADE_TARBALL ]; then
+    echo "Installing blade"
+    curl -o $BLADE_TARBALL https://loku-buildpacks.s3.amazonaws.com/meteor/blade.tgz
+    tar xvf $BLADE_TARBALL -C $METEOR_HOME/usr/lib/meteor/packages
+  fi
+}
+
 build() {
   ( 
     cd $BUILD_DIR
@@ -37,4 +48,5 @@ build() {
 [ ! -d $CACHE_DIR ] && mkdir $CACHE_DIR
 
 fetch_meteor
+install_extra_packages
 build
