@@ -2,35 +2,17 @@
 
 BUILD_DIR=$1
 CACHE_DIR=$2
-METEOR_HOME=$BUILD_DIR/.meteor/local
-PATH=$METEOR_HOME/usr/bin:$METEOR_HOME/usr/lib/meteor/bin:$PATH
+METEOR_HOME=$BUILD_DIR/.meteor/checkout
+PATH=$METEOR_HOME:$METEOR_HOME/dev_bundle/bin:$PATH
 
 fetch_meteor() {
-  if [ -f "$METEOR_HOME/usr/bin/meteor" ] ; then
+  if [ -d "$METEOR_HOME/.git" ] ; then
     # Skip if meteor is already fetched
     return
   fi
 
-  eval $(curl https://install.meteor.com | grep '^VERSION=')
-  PACKAGE=meteor_${VERSION}-1_amd64.deb
-
-  echo "Fetching meteor deb package"
-  curl -o "$CACHE_DIR/$PACKAGE" "https://d3sqy0vbqsdhku.cloudfront.net/${PACKAGE}"
-
-  echo "Unpacking meteor"
-  [ ! -d "$METEOR_HOME" ] && mkdir -p "$METEOR_HOME"
-  ar p "$CACHE_DIR/$PACKAGE" data.tar.gz | tar -C "$METEOR_HOME" -zxf -
-}
-
-install_extra_packages() {
-  echo "Installing extra packages"
-
-  BLADE_TARBALL="$CACHE_DIR/blade.tgz"
-  #if [ ! -f $BLADE_TARBALL ]; then
-    echo "Installing blade"
-    curl -o $BLADE_TARBALL https://loku-buildpacks.s3.amazonaws.com/meteor/blade.tgz
-    tar xf $BLADE_TARBALL -C $METEOR_HOME/usr/lib/meteor/packages
-  #fi
+  mkdir -p $METEOR_HOME
+  git clone https://github.com/loku/meteor.git $METEOR_HOME
 }
 
 build() {
@@ -48,5 +30,4 @@ build() {
 [ ! -d $CACHE_DIR ] && mkdir $CACHE_DIR
 
 fetch_meteor
-install_extra_packages
 build
