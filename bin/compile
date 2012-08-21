@@ -8,7 +8,7 @@ function log-step() {
 
 BUILD_DIR=$1
 CACHE_DIR=$2
-METEOR_HOME=$BUILD_DIR/.meteor/checkout
+METEOR_HOME=$CACHE_DIR/.meteor/checkout
 PATH=$METEOR_HOME:$METEOR_HOME/dev_bundle/bin:$PATH
 
 fetch_meteor() {
@@ -20,6 +20,9 @@ fetch_meteor() {
   log-step "Installing meteor"
 
   mkdir -p $METEOR_HOME
+  mkdir -p $BUILD_DIR/.meteor
+  ln -f $METEOR_HOME $BUILD_DIR/.meteor/checkout
+
   git clone https://github.com/loku/meteor.git $METEOR_HOME
 
   DEV_BUNDLE=`mktemp -u`
