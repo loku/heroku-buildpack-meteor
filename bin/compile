@@ -2,6 +2,10 @@
 
 set -eo pipefail
 
+function log-step() {
+    echo "-----> $@"
+}
+
 BUILD_DIR=$1
 CACHE_DIR=$2
 METEOR_HOME=$BUILD_DIR/.meteor/checkout
@@ -12,6 +16,8 @@ fetch_meteor() {
     # Skip if meteor is already fetched
     return
   fi
+
+  log-step "Installing meteor"
 
   mkdir -p $METEOR_HOME
   git clone https://github.com/loku/meteor.git $METEOR_HOME
@@ -26,7 +32,7 @@ fetch_meteor() {
 build() {
   ( 
     cd $BUILD_DIR
-    echo "Building meteor bundle"
+    log-step "Building meteor bundle"
     meteor bundle $CACHE_DIR/bundle.tar.gz 
     mkdir -p $BUILD_DIR/.meteor/local/build
     tar -zxf $CACHE_DIR/bundle.tar.gz --strip-components 1 -C $BUILD_DIR/.meteor/local/build
